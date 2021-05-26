@@ -3,6 +3,7 @@
 #include <string>
 #include <sstream>
 #include <iomanip>
+#include "Singleton.h"
 #include "Debug.h"
 
 // ベクトル構造体
@@ -91,7 +92,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		DrawRotaGraph(rcA.Right() + 50, rcA.Bottom() + 50, 3.0f, 0.0f, graphH[frame/10], true);
 		std::ostringstream oss;
 		
-		oss << "x=" << rcA.center.x << ",y=" << rcA.center.y << std::endl;
+		oss << L"x=" << rcA.center.x << L",y=" << rcA.center.y << std::endl;
 		OutputDebugStringA(oss.str().c_str());
 
 		ScreenFlip();
@@ -110,6 +111,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Debug::Output("Main Loop is end\n");
 	sprintf_s(outstr, "test=%d", test);
 	OutputDebugStringA(outstr);
+
+	Singleton& singleton = Singleton::Instance();
+	singleton.Out();
+	Singleton& singleton2 = Singleton::Instance();
+	singleton2.Out();
+	auto& singleton3 = Singleton::Instance();
+	Singleton& singleton4 = singleton3;
+	singleton3.Out();
+	singleton4.Out();
 
 	DxLib_End();
 	return 0;

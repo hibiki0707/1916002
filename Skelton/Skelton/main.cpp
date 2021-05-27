@@ -4,7 +4,12 @@
 #include <sstream>
 #include <iomanip>
 #include "Singleton.h"
+#include "Game.h"
+#include "Scene.h"
+#include "Player.h"
+#include "Enemy.h"
 #include "Debug.h"
+#include "Common/Geometry.h"
 
 // ベクトル構造体
 struct Vector2 {
@@ -83,18 +88,24 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		if (keystate[KEY_INPUT_DOWN]) {
 			rcA.center.y += speed;
 		}
+#if defined(_DEBUG) && defined(_CONSOLE)
 		DrawBox(rcA.Left(), rcA.Top(), rcA.Right(), rcA.Bottom(), 0xffffff, true);
 		DrawFormatString(10, 10, 0xffffaa, L"x=%d,y=%d", (int)rcA.center.x, (int)rcA.center.y);
 		
 		int srcX = 51 * (frame / 10);
 		int srcY = 0;
 		//DrawRotaGraph(rcA.Right() + 50, rcA.Bottom() + 50, 49,36,3.0f,0.0f,graphH, true);
+#ifdef DEBUG
+#elif defined(CONSOLE) 
+#else
+#endif
+		
 		DrawRotaGraph(rcA.Right() + 50, rcA.Bottom() + 50, 3.0f, 0.0f, graphH[frame/10], true);
 		std::ostringstream oss;
 		
 		oss << L"x=" << rcA.center.x << L",y=" << rcA.center.y << std::endl;
 		OutputDebugStringA(oss.str().c_str());
-
+#endif
 		ScreenFlip();
 		frame = (frame + 1) % 60;
 	}

@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="Debug.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Singleton.cpp" />
+    <ClCompile Include="Scene.cpp" />
+    <ClCompile Include="Player.cpp" />
+    <ClCompile Include="Enemy.cpp" />
+    <ClCompile Include="Common\Geometry.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Debug.h" />
+    <ClInclude Include="Singleton.h" />
+    <ClInclude Include="Scene.h" />
+    <ClInclude Include="Player.h" />
+    <ClInclude Include="Enemy.h" />
+    <ClInclude Include="Common\Geometry.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Common">
+      <UniqueIdentifier>{7497cda6-b5da-47f2-9e1f-02f303ff6d84}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

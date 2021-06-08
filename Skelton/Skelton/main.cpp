@@ -126,11 +126,17 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Singleton& singleton = Singleton::Instance();
 	singleton.Out();
 	Singleton& singleton2 = Singleton::Instance();
+	auto singleton3 = singleton2;
 	singleton2.Out();
-	auto& singleton3 = Singleton::Instance();
+	singleton2.Out();
+	singleton2.Out();
+	singleton2.Out();
+	singleton2.Out();
+	singleton3.Out();
+	/*auto& singleton3 = Singleton::Instance();
 	Singleton& singleton4 = singleton3;
 	singleton3.Out();
-	singleton4.Out();
+	singleton4.Out();*/
 
 	DxLib_End();
 	return 0;

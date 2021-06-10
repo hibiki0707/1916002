@@ -47,7 +47,7 @@ struct Rect
 };
 
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
-	
+
 	SetWindowText(L"1916002_çrñÿãøãH");
 	ChangeWindowMode(true);
 	DxLib_Init();
@@ -70,6 +70,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	}
 
 	unsigned int frame = 0;
+
+	int lastMouseInput = GetMouseInput();
 	while (ProcessMessage() != -1) {
 		ClearDrawScreen();
 		DrawString(100, 100, L"Hello World", 0xffffff);
@@ -88,28 +90,48 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		if (keystate[KEY_INPUT_DOWN]) {
 			rcA.center.y += speed;
 		}
-#if defined(_DEBUG) && defined(_CONSOLE)
+
 		DrawBox(rcA.Left(), rcA.Top(), rcA.Right(), rcA.Bottom(), 0xffffff, true);
 		DrawFormatString(10, 10, 0xffffaa, L"x=%d,y=%d", (int)rcA.center.x, (int)rcA.center.y);
-		
+
 		int srcX = 51 * (frame / 10);
 		int srcY = 0;
 		//DrawRotaGraph(rcA.Right() + 50, rcA.Bottom() + 50, 49,36,3.0f,0.0f,graphH, true);
-#ifdef DEBUG
-#elif defined(CONSOLE) 
-#else
-#endif
-		
-		DrawRotaGraph(rcA.Right() + 50, rcA.Bottom() + 50, 3.0f, 0.0f, graphH[frame/10], true);
+
+		int mx, my;
+		GetMousePoint(&mx, &my);
+
+		auto currentMouseInput = GetMouseInput();
+		if (((currentMouseInput & MOUSE_INPUT_LEFT) & MOUSE_INPUT_LEFT) &&
+			!((currentMouseInput & MOUSE_INPUT_LEFT) & MOUSE_INPUT_LEFT)) {
+		}
+		lastMouseInput = currentMouseInput;
+
+		Vector2 dir = { static_cast<float>(mx) - rcA.center.x,
+		static_cast<float>(my) - rcA.center.y };
+
+		float angle = atan2(dir.y, dir.x);
+
+		int cx = 15;
+		int gw, gh;
+		GetGraphSize(graphH[frame / 10], &gw, &gh);
+		if (flipFlg) {
+			cx = gw - cx;
+		}
+
+		DrawRotaGraph2(rcA.center.x, rcA.center.y,
+			15,35,
+			5.0f, 0.0f, graphH[frame/10], true);
+		DrawCircleAA(rcA.center.x, rcA.center.y, 5, 16, 0xff4444);
 		std::ostringstream oss;
 		
 		oss << L"x=" << rcA.center.x << L",y=" << rcA.center.y << std::endl;
 		OutputDebugStringA(oss.str().c_str());
-#endif
 		ScreenFlip();
 		frame = (frame + 1) % 60;
 	}
-
+	++test;
+	//++test2;
 	char outstr[16];
 	sprintf_s(outstr, "test=%d", test);
 	OutputDebugStringA(outstr);
@@ -126,7 +148,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Singleton& singleton = Singleton::Instance();
 	singleton.Out();
 	Singleton& singleton2 = Singleton::Instance();
-	auto singleton3 = singleton2;
+	auto& singleton3 = singleton2;
 	singleton2.Out();
 	singleton2.Out();
 	singleton2.Out();

@@ -46,13 +46,19 @@ struct Rect
 	}
 };
 
+Position2 GetCurrentMousePosition2() {
+	int mx, my;
+	GetMousePoint(&mx, &my);
+	return{ static_cast<float>(mx),static_cast<float>(my) };
+}
+
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	SetWindowText(L"1916002_荒木響稀");
 	ChangeWindowMode(true);
 	DxLib_Init();
 	SetDrawScreen(DX_SCREEN_BACK);
-	Rect rcA = { 200,200,50,50 };
+	Rect rcA = { { 200,200},50,50 };
 	char keystate[256];
 
 	//auto graphH = LoadGraph(L"");
@@ -102,17 +108,31 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		GetMousePoint(&mx, &my);
 
 		auto currentMouseInput = GetMouseInput();
-		if (((currentMouseInput & MOUSE_INPUT_LEFT) & MOUSE_INPUT_LEFT) &&
-			!((currentMouseInput & MOUSE_INPUT_LEFT) & MOUSE_INPUT_LEFT)) {
+		if ((currentMouseInput & MOUSE_INPUT_LEFT) &&
+			!(currentMouseInput & MOUSE_INPUT_LEFT)) {
 		}
 		lastMouseInput = currentMouseInput;
 
-		Vector2 dir = { static_cast<float>(mx) - rcA.center.x,
-		static_cast<float>(my) - rcA.center.y };
+		Vector2 dir = GetCurrentMousePosition2() - rcA.center,
+			float angle = atan2(dir.y, dir.x);
 
-		float angle = atan2(dir.y, dir.x);
+		//constexpr size_t block_size = 32;
+		//const auto count = 720 / block_size;
+		//int x = 0;
+		//int y = 240;
+		//for (int i = 1; i < count; ++i) {
+		//	auto Nextx = block_size * i;
+		//	auto Nexty = 240 + 100 * sinf(0.5f * (float)Nextx * DX_PI_F / 180.0f);
+		//	// 地面表示
+		//	DrawLineAA(x, y,	// 始点
+		//		Nextx, Nexty,		// 終点
+		//		0xffffff, 5.0f);
+		//	x = Nextx;
+		//	y = Nexty;
+		//}
+		
 
-		int cx = 15;
+		int cx = 32;
 		int gw, gh;
 		GetGraphSize(graphH[frame / 10], &gw, &gh);
 		if (flipFlg) {
@@ -120,8 +140,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		}
 
 		DrawRotaGraph2(rcA.center.x, rcA.center.y,
-			15,35,
-			5.0f, 0.0f, graphH[frame/10], true);
+			cx,35,
+			5.0f, 0.0f, graphH[frame/10], true,flipFlg);
 		DrawCircleAA(rcA.center.x, rcA.center.y, 5, 16, 0xff4444);
 		std::ostringstream oss;
 		

@@ -113,8 +113,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		}
 		lastMouseInput = currentMouseInput;
 
-		Vector2 dir = GetCurrentMousePosition2() - rcA.center,
-			float angle = atan2(dir.y, dir.x);
+		Vector2 dir = { static_cast<float>(mx) - rcA.center.x,
+		static_cast<float>(my) - rcA.center.y };
+
+		float angle = atan2(dir.y, dir.x);
 
 		//constexpr size_t block_size = 32;
 		//const auto count = 720 / block_size;
@@ -132,16 +134,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//}
 		
 
-		int cx = 32;
+		/*int cx = 32;
 		int gw, gh;
 		GetGraphSize(graphH[frame / 10], &gw, &gh);
 		if (flipFlg) {
 			cx = gw - cx;
-		}
+		}*/
 
 		DrawRotaGraph2(rcA.center.x, rcA.center.y,
-			cx,35,
-			5.0f, 0.0f, graphH[frame/10], true,flipFlg);
+			15,35,
+			5.0f, 0.0f, graphH[frame/10], true);
 		DrawCircleAA(rcA.center.x, rcA.center.y, 5, 16, 0xff4444);
 		std::ostringstream oss;
 		

@@ -103,7 +103,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		float theta = (float)(freameForAngle)*DX_PI_F / 180.0f;
 		int x = 0;
 		int y = 240; //+ 100 * sinf(theta);
+		Position2 lastPos(x, y);
 		Position2 p0(x, y);
+		// 過去１過去２。過去２の方がより過去。描画対象は過去１
+		Vector2 last90DeltaVectors[2] = { {0.0f,0.0f },{0.0f,0.0f} };
 		for (int i = 1; i < count; ++i) {
 			theta += 0.1f;
 			/*auto nextX = block_size * i;
@@ -168,14 +171,58 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			y = nextY;*/
 
 			auto p1 = p0;
-			p1 += Vector2(block_size,
-				50.0f * sinf(0.5f * (float)(freameForAngle+block_size * i) * DX_PI_F / 180.0f)
-			).Normalized() * block_size;
+			auto deltaVec = Vector2(block_size, block_size * 2.0f *
+				sinf(0.5f * (float)(freameForAngle + block_size * i) * DX_PI_F / 180.0f)
+			);
+			deltaVec = deltaVec.Normalized() * block_size;
+			p1=p0+deltaVec;
+			auto delta90Vec = deltaVec.Rotated90();
+
+			auto middleVecR = delta90Vec;
+			if (!(last90DeltaVectors[0] == Vector2(0.0f, 0.0f))) {
+				middleVecR = (middleVecR + last90DeltaVectors[0]).Normalized()*block_size;
+			}
+			
+			auto middleVecL = delta90Vec;
+			if (!(last90DeltaVectors[1] == Vector2(0.0f, 0.0f))) {
+				middleVecL = (last90DeltaVectors[0] + last90DeltaVectors[1]).Normalized() * block_size;
+			}
+			last90DeltaVectors[1] = last90DeltaVectors[0];
+			last90DeltaVectors[0] = deltaVec.Rotated90();
 
 			// 地面の表示
+			// 上辺
 			DrawLineAA(p0.x, p0.y,	// 始点
 				p1.x, p1.y,		// 終点
 				0xffffff, 5.0f);
+
+			auto rightPos = p1 + middleVecR;
+			
+			auto leftPos = p0 + middleVecL;
+			
+			//auto middlePos = p0 + middleVecR;
+			//DrawLineAA(p0.x, p0.y,	// 始点
+			//	middlePos.x, middlePos.y,		// 終点
+			//	0xff8888, 4.0f);
+
+			DrawModiGraph(
+				p0.x,p0.y,	// 左上
+				p1.x,p1.y,	// 右上
+				rightPos.x,rightPos.y,	// 右下
+				leftPos.x,leftPos.y,	// 左下
+				groundH,
+				true
+			);
+
+			// 右辺
+			DrawLineAA(p1.x, p1.y,	// 始点
+				rightPos.x, rightPos.y,		// 終点
+				0x888ff, 3.0f);
+
+			// 左辺
+			DrawLineAA(p0.x, p0.y,	// 始点
+				leftPos.x, leftPos.y,		// 終点
+				0xff8888, 3.0f);
 
 			p0 = p1;
 

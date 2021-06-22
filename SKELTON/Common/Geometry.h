@@ -37,6 +37,11 @@ struct Vector2{
 	/// ベクトルを90°曲げる
 	/// </summary>
 	void Rotate90();
+
+	/// <summary>
+	/// 90°回転したベクトルを返す
+	/// </summary>90°回転ベクトル
+	Vector2 Rotated90()const;
 };
 
 Vector2 operator+(const Vector2& lval, const Vector2& rval);

@@ -107,6 +107,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		Position2 p0(x, y);
 		// 過去１過去２。過去２の方がより過去。描画対象は過去１
 		Vector2 last90DeltaVectors[2] = { {0.0f,0.0f },{0.0f,0.0f} };
+		
 		for (int i = 1; i < count; ++i) {
 			theta += 0.1f;
 			/*auto nextX = block_size * i;
@@ -171,7 +172,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			y = nextY;*/
 
 			auto p1 = p0;
-			auto deltaVec = Vector2(block_size, block_size * 2.0f *
+			auto deltaVec = Vector2(block_size, 40.0f *
 				sinf(0.5f * (float)(freameForAngle + block_size * i) * DX_PI_F / 180.0f)
 			);
 			deltaVec = deltaVec.Normalized() * block_size;
@@ -180,7 +181,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 			auto middleVecR = delta90Vec;
 			if (!(last90DeltaVectors[0] == Vector2(0.0f, 0.0f))) {
-				middleVecR = (middleVecR + last90DeltaVectors[0]).Normalized()*block_size;
+				middleVecR = (delta90Vec + last90DeltaVectors[0]).Normalized()*block_size;
 			}
 			
 			auto middleVecL = delta90Vec;
@@ -195,34 +196,63 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			DrawLineAA(p0.x, p0.y,	// 始点
 				p1.x, p1.y,		// 終点
 				0xffffff, 5.0f);
+			DrawCircle(p0.x, p0.y, 5, 0xffaaaa);
+
+			auto LightPos = p0 + middleVecL;
+			/*auto MiddlePos = LightPos;
+			if (lastDeltaVec90 == Vector2(0.0f, 0.0f)) {
+				auto halfVec = deltaVec.Rotated90() + lastDeltaVec90;
+
+				MiddlePos = p0 + halfVec.Normalized() * block_size;
+			}*/
+			//lastDeltaVec90 = deltaVec.Rotated90();
+			auto RightPos = p1 + middleVecR;
+
+			DrawLineAA(p0.x, p0.y,	// 始点
+				p0.x, p0.y+block_size,		// 終点
+				0xffffff, 5.0f);
+
+			auto leftPos = p0 + middleVecL;
 
 			auto rightPos = p1 + middleVecR;
-			
-			auto leftPos = p0 + middleVecL;
 			
 			//auto middlePos = p0 + middleVecR;
 			//DrawLineAA(p0.x, p0.y,	// 始点
 			//	middlePos.x, middlePos.y,		// 終点
 			//	0xff8888, 4.0f);
 
-			DrawModiGraph(
-				p0.x,p0.y,	// 左上
-				p1.x,p1.y,	// 右上
-				rightPos.x,rightPos.y,	// 右下
-				leftPos.x,leftPos.y,	// 左下
-				groundH,
-				true
-			);
+			//DrawRectModiGraph(
+			//	p0.x,p0.y,	// 左上
+			//	p1.x,p1.y,	// 右上
+			//	rightPos.x,rightPos.y,	// 右下
+			//	leftPos.x,leftPos.y,	// 左下
+			//	48,0,
+			//	16,16,
+			//	groundH,
+			//	true
+			//);
 
 			// 右辺
 			DrawLineAA(p1.x, p1.y,	// 始点
-				rightPos.x, rightPos.y,		// 終点
+				RightPos.x, RightPos.y,		// 終点
 				0x888ff, 3.0f);
 
 			// 左辺
 			DrawLineAA(p0.x, p0.y,	// 始点
-				leftPos.x, leftPos.y,		// 終点
+				LightPos.x, LightPos.y,		// 終点
 				0xff8888, 3.0f);
+
+			// 
+			//DrawLineAA(p0.x, p0.y,	// 始点
+			//	MiddlePos.x, MiddlePos.y,		// 終点
+			//	0x88ff88, 3.0f);
+
+			DrawModiGraph(p0.x, p0.y,
+				p1.x, p1.y,
+				RightPos.x, RightPos.y,
+				LightPos.x, LightPos.y,
+				groundH,
+				true);
 
 			p0 = p1;
 

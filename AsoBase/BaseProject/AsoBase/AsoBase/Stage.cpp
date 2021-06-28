@@ -45,13 +45,13 @@ void Stage::Draw(void) {
 			mapNo = mMap[y][x];
 			switch (mapNo)
 			{
-			case 0:
+			case -1:
 				tmpImage = mImageOutFloor;
 				break;
 			case 1:
 				tmpImage = mImageInFloor;
 				break;
-			case 9:
+			case 2:
 				tmpImage = mImageInWall;
 				break;
 			default:
@@ -143,24 +143,24 @@ void Stage::LoadData(int StageNo){
 	// ファイルを読み込む
 	std::ifstream ifs(filePath);
 	// 1行ずつ読み込む
+	int y = 0;
 	std::string line;
-	std::string strvec1;
+
 	while (getline(ifs, line)) {
-		
+
 		// Yで分割されたline
 		std::vector<std::string> strvec = Utility::Split(line, ',');
 
 		// Xで分割されたstrvec
-		std::vector<std::string> line = Utility::Split(strvec1, ',');
 
 		// mMapに値を代入して、
 		// ステージを作成
-		for (int x = 0; x < strvec; x++) {
-				mMap[0][x];
-			}
+		for (int x = 0; x < strvec.size(); x++) {
+			mMap[y][x] = stoi(strvec[x]);
 		}
+		int i = stoi(strvec[0]);
 
-		//int i = stoi(std::string('11'));
+		y++;
 	}
 
 	if (true){}

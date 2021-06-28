@@ -47,6 +47,9 @@ public:
 	// ステージ構成のファイルパスを取得
 	std::string GetCsvPathGround(int StageNo);
 
+	// ギミック構成のファイルパスを取得
+	std::string GetCsvPathGimmick(int StageNo);
+
 private:
 	Stage* mStage;
 	Unit* mUnit;
@@ -68,6 +71,9 @@ private:
 
 	// コードでステージ設定
 	void SetStage(void);
+
+	// 外部ファイルを使用し、ステージ設定
+	void LoadGimmickData(void);
 
 	// 状態遷移
 	void ChangeState(STATE state);

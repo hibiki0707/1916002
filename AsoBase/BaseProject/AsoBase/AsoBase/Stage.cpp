@@ -8,7 +8,7 @@
 
 Stage::Stage(GameScene* scene){
 	mGameScene = scene;
-	scene->Init();
+	//scene->Init();
 }
 
 void Stage::Init(int StageNo){

@@ -34,6 +34,9 @@ public:
 	void UpdateClear(void);
 	void UpdateChangeStge(void);
 	void Draw(void) override;
+	void DrawGame(void);
+	void DrawClear(void);
+	void DrawChangeStge(void);
 	void Release(void) override;
 	
 	Stage* GetStage(void);

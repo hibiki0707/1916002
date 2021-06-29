@@ -56,6 +56,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	int assetsH = LoadGraph(L"img/ground2.png");
 	assert(assetsH >= 0);
 
+	int arrowH = LoadGraph(L"img/arrow.png");
 	Rect rcA = { {200,200},50,50 };
 	char keystate[256];
 
@@ -103,12 +104,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		float theta = (float)(freameForAngle)*DX_PI_F / 180.0f;
 		int x = 0;
 		int y = 240; //+ 100 * sinf(theta);
-		Position2 lastPos(x, y);
+		Position2 lastPos(x, y);	// 前の座標
 		Position2 p0(x, y);
 		// 過去１過去２。過去２の方がより過去。描画対象は過去１
 		Vector2 last90DeltaVectors[2] = { {0.0f,0.0f },{0.0f,0.0f} };
 		
-		for (int i = 1; i < count; ++i) {
+		for (int i = 1; i <= count; ++i) {
 			theta += 0.1f;
 			/*auto nextX = block_size * i;
 			auto nextY = 140 + 100 * sinf((float)(0.5*nextX+freameForAngle) * DX_PI_F / 180.0f);*/
@@ -178,13 +179,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			deltaVec = deltaVec.Normalized() * block_size;
 			p1=p0+deltaVec;
 			auto delta90Vec = deltaVec.Rotated90();
-
 			auto middleVecR = delta90Vec;
+			auto middleVecL = delta90Vec;
+			
 			if (!(last90DeltaVectors[0] == Vector2(0.0f, 0.0f))) {
 				middleVecR = (delta90Vec + last90DeltaVectors[0]).Normalized()*block_size;
+				middleVecL = last90DeltaVectors[0];
 			}
 			
-			auto middleVecL = delta90Vec;
 			if (!(last90DeltaVectors[1] == Vector2(0.0f, 0.0f))) {
 				middleVecL = (last90DeltaVectors[0] + last90DeltaVectors[1]).Normalized() * block_size;
 			}
@@ -198,7 +200,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				0xffffff, 5.0f);
 			DrawCircle(p0.x, p0.y, 5, 0xffaaaa);
 
-			auto LightPos = p0 + middleVecL;
+			//auto leftPos = p0 + middleVecL;
 			/*auto MiddlePos = LightPos;
 			if (lastDeltaVec90 == Vector2(0.0f, 0.0f)) {
 				auto halfVec = deltaVec.Rotated90() + lastDeltaVec90;
@@ -206,15 +208,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				MiddlePos = p0 + halfVec.Normalized() * block_size;
 			}*/
 			//lastDeltaVec90 = deltaVec.Rotated90();
-			auto RightPos = p1 + middleVecR;
+			//auto rightPos = p1 + middleVecR;
 
 			DrawLineAA(p0.x, p0.y,	// 始点
 				p0.x, p0.y+block_size,		// 終点
 				0xffffff, 5.0f);
 
-			auto leftPos = p0 + middleVecL;
+			auto leftPos = lastPos + middleVecL;
 
-			auto rightPos = p1 + middleVecR;
+			auto rightPos = p0 + middleVecR;
 			
 			//auto middlePos = p0 + middleVecR;
 			//DrawLineAA(p0.x, p0.y,	// 始点
@@ -232,30 +234,50 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			//	true
 			//);
 
-			// 右辺
-			DrawLineAA(p1.x, p1.y,	// 始点
-				RightPos.x, RightPos.y,		// 終点
-				0x888ff, 3.0f);
+			//// 右辺
+			//DrawLineAA(p1.x, p1.y,	// 始点
+			//	RightPos.x, RightPos.y,		// 終点
+			//	0x888ff, 3.0f);
 
-			// 左辺
-			DrawLineAA(p0.x, p0.y,	// 始点
-				LightPos.x, LightPos.y,		// 終点
-				0xff8888, 3.0f);
+			//// 左辺
+			//DrawLineAA(p0.x, p0.y,	// 始点
+			//	LightPos.x, LightPos.y,		// 終点
+			//	0xff8888, 3.0f);
 
 			// 
 			//DrawLineAA(p0.x, p0.y,	// 始点
 			//	MiddlePos.x, MiddlePos.y,		// 終点
 			//	0x88ff88, 3.0f);
+			if (i == count) {	// 最後の要素
+			
+				DrawModiGraph(lastPos.x, lastPos.y,
+					p0.x, p0.y,
+					rightPos.x, rightPos.y,
+					leftPos.x, leftPos.y,
+					groundH,
+					true);
 
-			DrawModiGraph(p0.x, p0.y,
-				p1.x, p1.y,
-				RightPos.x, RightPos.y,
-				LightPos.x, LightPos.y,
-				groundH,
-				true);
+			}
+			else {
+				leftPos = p0 + middleVecR;
 
-			p0 = p1;
+				auto rightPos2 = p1 + delta90Vec;
+				DrawModiGraph(p0.x, p0.y,
+					p1.x, p1.y,
+					rightPos2.x, rightPos2.y,
+					leftPos.x, leftPos.y,
+					groundH,
+					true);
+				/*DrawLineAA(lastPos.x, lastPos.y,
+					LightPos.x, LightPos.y,
+					0xffffff, 0.3f);
+				DrawLineAA(p0.x, p0.y,
+					RightPos.x, RightPos.y,
+					0xffffff, 0.3f);*/
 
+				lastPos = p0;
+				p0 = p1;
+			}
 		}
 
 		freameForAngle = (freameForAngle + 1) % 720;

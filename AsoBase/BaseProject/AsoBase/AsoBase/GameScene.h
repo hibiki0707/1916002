@@ -17,7 +17,7 @@ class GameScene : public SceneBase
 public:
 
 	// 最大ステージ数
-	static constexpr int MAX_STAGE_NO = 2;
+	static constexpr int MAX_STAGE_NO = 5;
 
 	// 状態
 	enum  class STATE

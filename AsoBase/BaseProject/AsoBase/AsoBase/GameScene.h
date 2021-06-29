@@ -30,6 +30,9 @@ public:
 	GameScene(SceneManager* manager);
 	void Init(void) override;
 	void Update(void) override;
+	void UpdateGame(void);
+	void UpdateClear(void);
+	void UpdateChangeStge(void);
 	void Draw(void) override;
 	void Release(void) override;
 	

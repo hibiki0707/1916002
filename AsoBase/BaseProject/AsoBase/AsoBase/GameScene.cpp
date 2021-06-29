@@ -51,11 +51,27 @@ void GameScene::Update(void){
 		mSceneManager->ChangeScene(SCENE_ID::GAMEOVER, true);
 	}
 
+	switch (mState)
+	{
+	case GameScene::STATE::GAME: 
+		UpdateGame();
+		break;
+	case GameScene::STATE::CLEAR:
+		UpdateClear();
+		break;
+	case GameScene::STATE::CHANGE_STAGE:
+		UpdateChangeStge();
+		break;
+	
+	}
+}
+
+void GameScene::UpdateGame(void){
 	// ステージ
 	mStage->Update();
 	// Unit
 	mUnit->Update();
-	
+
 	// 動的配列
 	int size = mBoxes.size();
 	for (int i = 0; i < size; i++) {
@@ -86,9 +102,17 @@ void GameScene::Update(void){
 			// 次のステージへ
 			ChangeStage();
 		}
-	
-	}
 
+	}
+}
+
+void GameScene::UpdateClear(void){
+	
+
+}
+
+void GameScene::UpdateChangeStge(void){
+	
 }
 
 /// <summary>
@@ -102,6 +126,22 @@ void GameScene::Draw(void){
 	// 画面のクリア
 	ClearDrawScreen();
 
+	switch (mState)
+	{
+	case GameScene::STATE::GAME:
+		DrawGame();
+		break;
+	case GameScene::STATE::CLEAR:
+		DrawClear();
+		break;
+	case GameScene::STATE::CHANGE_STAGE:
+		DrawChangeStge();
+		break;
+
+	}
+}
+
+void GameScene::DrawGame(void){
 	// ステージ
 	mStage->Draw();
 
@@ -117,6 +157,13 @@ void GameScene::Draw(void){
 	for (int i = 0; i < size; i++) {
 		mBoxes[i]->Draw();
 	}
+}
+
+void GameScene::DrawClear(void){
+
+}
+
+void GameScene::DrawChangeStge(void){
 
 }
 
@@ -289,8 +336,7 @@ void GameScene::SetStage(void){
 void GameScene::LoadGimmickData(void){
 	
 	// ファイルパスを取得
-	std:: string filePath=
-	GetCsvPathGimmick(mStageNo);
+	std:: string filePath = GetCsvPathGimmick(mStageNo);
 
 	// ファイルを読み込む
 	std::ifstream ifs(filePath);
@@ -346,6 +392,17 @@ void GameScene::LoadGimmickData(void){
 }
 
 void GameScene::ChangeState(STATE state){
+	mState = state;
+	switch (state)
+	{
+	case GameScene::STATE::GAME:
+		break;
+	case GameScene::STATE::CLEAR:
+		break;
+	case GameScene::STATE::CHANGE_STAGE:
+		break;
+
+	}
 
 }
 

@@ -12,6 +12,7 @@
 #include "Vector2.h"
 #include"Fader.h"
 #include"Utility.h"
+#include"TimeLimit.h"
 #include "GameScene.h"
 
 GameScene::GameScene(SceneManager* manager) : SceneBase(manager){
@@ -19,6 +20,9 @@ GameScene::GameScene(SceneManager* manager) : SceneBase(manager){
 	ChangeState(STATE::GAME);
 	mFader = new Fader();
 	mFader->Init();
+
+	mTimeLimit = new TimeLimit(manager);
+	
 }
 
 /// <summary>
@@ -37,6 +41,12 @@ void GameScene::Init(void){
 
 	// 外部ファイルを使用し、ステージ設定
 	LoadGimmickData();
+
+	mImageClear = LoadGraph("Image/Congratulations.png");
+	mStepClear = 0.0f;
+
+	// 時間制限
+	mTimeLimit->Start(mStageNo * 60);
 }
 
 /// <summary>
@@ -83,6 +93,13 @@ void GameScene::UpdateGame(void){
 		mStorages[i]->Update();
 	}
 
+	// 時間制限
+	mTimeLimit->Update();
+	if (mTimeLimit->IsTimeOver() == true) {
+		mSceneManager->ChangeScene(SCENE_ID::GAMEOVER,true);
+		return;
+	}
+
 	// クリア判定
 	bool isClear = true;
 	size = mBoxes.size();
@@ -100,19 +117,50 @@ void GameScene::UpdateGame(void){
 		}
 		else {
 			// 次のステージへ
-			ChangeStage();
+			//ChangeStage();
+			ChangeState(STATE::CLEAR);
+			return;
 		}
 
 	}
 }
 
 void GameScene::UpdateClear(void){
-	
-
+	mStepClear+= mSceneManager->GetDeltaTime();
+	if (mStepClear > TIME_CLEAR_) {
+		
+		ChangeState(STATE::CHANGE_STAGE);
+		return;
+	}
 }
 
 void GameScene::UpdateChangeStge(void){
+	mFader->Update();
+
+	Fader::FADE_STATE state = mFader->GetState();
+
+	switch (state)
+	{
+	case Fader::FADE_STATE::FADE_OUT:
+		// だんだん暗くする
+		if (mFader->IsEnd() == true) {
+			// ステージ切り替え
+			ChangeStage();
+			// 徐々に明るくする
+			mFader->SetFade(Fader::FADE_STATE::FADE_IN);
+		}
+
+		break;
+	case Fader::FADE_STATE::FADE_IN:
+		// 段々明るくする
+		if (mFader->IsEnd() == true) {
+			mFader->SetFade(Fader::FADE_STATE::NONE);
+			ChangeState(STATE::GAME);
+		}
+		break;
 	
+	}
+
 }
 
 /// <summary>
@@ -157,9 +205,20 @@ void GameScene::DrawGame(void){
 	for (int i = 0; i < size; i++) {
 		mBoxes[i]->Draw();
 	}
+
+	// 時間制限
+	mTimeLimit->Draw();
+
+
 }
 
-void GameScene::DrawClear(void){
+void GameScene::DrawClear(void) {
+	DrawGame();
+
+	// ステージクリアの画面表示
+	DrawGraph(SCREEN_SIZE_X / 2 - (500 / 2)
+		, SCREEN_SIZE_Y / 2
+		, mImageClear, true);
 
 }
 
@@ -195,6 +254,8 @@ void GameScene::Release(void){
 		delete mStorages[i];
 	}
 	mStorages.clear();
+
+	DeleteGraph(mImageClear);
 }
 
 Stage* GameScene::GetStage(void){
@@ -265,6 +326,7 @@ std::string GameScene::GetCsvPathGimmick(int StageNo){
 
 void GameScene::ChangeStage(void){
 	Release();
+
 	// 次のステージへ行くため
 	mStageNo++;
 	Init();
@@ -274,6 +336,7 @@ void GameScene::SetStage(void){
 
 	// 荷物
 	Box* tmpBox;
+
 	// 荷物置き場
 	Storage* tmpStorage;
 
@@ -347,6 +410,7 @@ void GameScene::LoadGimmickData(void){
 
 	// 荷物
 	Box* tmpBox;
+
 	// 荷物置き場
 	Storage* tmpStorage;
 
@@ -398,8 +462,11 @@ void GameScene::ChangeState(STATE state){
 	case GameScene::STATE::GAME:
 		break;
 	case GameScene::STATE::CLEAR:
+		mStepClear = 0.0f;
 		break;
 	case GameScene::STATE::CHANGE_STAGE:
+		// だんだん暗くする
+		mFader->SetFade(Fader::FADE_STATE::FADE_OUT);
 		break;
 
 	}

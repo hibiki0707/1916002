@@ -10,6 +10,7 @@ class Unit;
 class Box;
 class Storage;
 class Fader;
+class TimeLimit;
 
 class GameScene : public SceneBase
 {
@@ -18,6 +19,9 @@ public:
 
 	// 最大ステージ数
 	static constexpr int MAX_STAGE_NO = 5;
+
+	// ステージクリアの表示時間
+	static constexpr float TIME_CLEAR_ = 3.0f;
 
 	// 状態
 	enum  class STATE
@@ -60,7 +64,11 @@ private:
 	Stage* mStage;
 	Unit* mUnit;
 	Storage* mStorage;
+	TimeLimit* mTimeLimit;
 	
+	int mImageClear;
+
+	float mStepClear;
 
 	// 動的配列
 	std::vector<Box*> mBoxes;

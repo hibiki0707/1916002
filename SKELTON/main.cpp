@@ -57,6 +57,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	assert(assetsH >= 0);
 
 	int arrowH = LoadGraph(L"img/arrow.png");
+	assert(arrowH >= 0);
+
+	int arrowsH = LoadGraph(L"img/arrow2.png");
+	assert(arrowsH >= 0);
+
+
 	Rect rcA = { {200,200},50,50 };
 	char keystate[256];
 
@@ -100,7 +106,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		}
 		 
 		constexpr size_t block_size = 32;
-		const auto count = 720 / block_size;
+		const int width = 400;
+		const auto count = width / block_size;
+
+		int imageWidth, imageHeight;
+		GetGraphSize(arrowsH, &imageWidth, &imageHeight);
+		float weight = (float)imageWidth / width;
 		float theta = (float)(freameForAngle)*DX_PI_F / 180.0f;
 		int x = 0;
 		int y = 240; //+ 100 * sinf(theta);
@@ -177,7 +188,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				sinf(0.5f * (float)(freameForAngle + block_size * i) * DX_PI_F / 180.0f)
 			);
 			deltaVec = deltaVec.Normalized() * block_size;
-			p1=p0+deltaVec;
+			p1 = p0 + deltaVec;
 			auto delta90Vec = deltaVec.Rotated90();
 			auto middleVecR = delta90Vec;
 			auto middleVecL = delta90Vec;
@@ -197,7 +208,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			// 上辺
 			DrawLineAA(p0.x, p0.y,	// 始点
 				p1.x, p1.y,		// 終点
-				0xffffff, 5.0f);
+				0xffffff, 3.0f);
 			DrawCircle(p0.x, p0.y, 5, 0xffaaaa);
 
 			//auto leftPos = p0 + middleVecL;
@@ -210,9 +221,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			//lastDeltaVec90 = deltaVec.Rotated90();
 			//auto rightPos = p1 + middleVecR;
 
-			DrawLineAA(p0.x, p0.y,	// 始点
-				p0.x, p0.y+block_size,		// 終点
-				0xffffff, 5.0f);
+			//DrawLineAA(p0.x, p0.y,	// 始点
+			//	p0.x, p0.y+block_size,		// 終点
+			//	0xffffff, 5.0f);
 
 			auto leftPos = lastPos + middleVecL;
 
@@ -249,24 +260,40 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			//	MiddlePos.x, MiddlePos.y,		// 終点
 			//	0x88ff88, 3.0f);
 			if (i == count) {	// 最後の要素
-			
-				DrawModiGraph(lastPos.x, lastPos.y,
+
+				// 現在→過去
+				DrawRectModiGraph(
+					lastPos.x, lastPos.y,
 					p0.x, p0.y,
 					rightPos.x, rightPos.y,
 					leftPos.x, leftPos.y,
-					groundH,
+					(i - 1) * block_size * 2, 64,	// 画像切り抜き左下
+					block_size*2,0,	// 画像切り抜き右下
+					arrowsH,
 					true);
 
-			}
-			else {
 				leftPos = p0 + middleVecR;
-
 				auto rightPos2 = p1 + delta90Vec;
-				DrawModiGraph(p0.x, p0.y,
+				DrawRectModiGraph(
+					p0.x, p0.y,
 					p1.x, p1.y,
 					rightPos2.x, rightPos2.y,
 					leftPos.x, leftPos.y,
-					groundH,
+					i * block_size*2, 64,	// 画像切り抜き左下
+					block_size, 0,	// 画像切り抜き右下
+					arrowsH,
+					true);
+			}
+			else {
+				// 過去→過去
+				DrawRectModiGraph(
+					lastPos.x, lastPos.y,
+					p0.x, p0.y,
+					rightPos.x, rightPos.y,
+					leftPos.x, leftPos.y,
+					(i - 1) * block_size*2, 64,	// 画像切り抜き左下
+					block_size*2,0,	// 画像切り抜き右下
+					arrowsH,
 					true);
 				/*DrawLineAA(lastPos.x, lastPos.y,
 					LightPos.x, LightPos.y,

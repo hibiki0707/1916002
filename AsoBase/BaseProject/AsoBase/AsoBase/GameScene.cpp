@@ -2,6 +2,7 @@
 #include<vector>
 #include<string>
 #include<fstream>
+#include<stack>
 #include "KeyCheck.h"
 #include "GameCommon.h"
 #include "SceneManager.h"
@@ -142,7 +143,7 @@ void GameScene::UpdateChangeStge(void){
 	switch (state)
 	{
 	case Fader::FADE_STATE::FADE_OUT:
-		// だんだん暗くする
+		// 段々暗くする
 		if (mFader->IsEnd() == true) {
 			// ステージ切り替え
 			ChangeStage();
@@ -322,6 +323,17 @@ std::string GameScene::GetCsvPathGimmick(int StageNo){
 	ret += FILE_NAME_GIMMICK;
 
 	return ret;
+}
+
+void GameScene::RegisHistory(DIR dir, Vector2 pos, Box* box){
+	Vector2 boxPos = { 0,0 };
+	if (box != nullptr) {
+		boxPos = box->GetPos();
+
+	}
+
+	History his = {dir,pos,box,boxPos};
+	mHistoryBack.push(his);
 }
 
 void GameScene::ChangeStage(void){

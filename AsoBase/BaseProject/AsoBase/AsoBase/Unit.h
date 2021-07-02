@@ -25,7 +25,8 @@ public:
 	enum  class STATE{
 		NONE,
 		IDLE,
-		MOVE
+		MOVE,
+		BACK_MOVE
 	};
 
 	// コンストラクタ
@@ -35,6 +36,9 @@ public:
 	void Update(void);
 	void Draw(void);
 	void Release(void);
+
+	// 巻き戻し機能
+	void BackMove(GameScene::History his);
 
 private:
 
@@ -69,6 +73,9 @@ private:
 
 	// 押し出し中
 	bool mIsPushing;
+
+	// 操作を戻すための情報
+	GameScene::History mHistry;
 
 	// 状態遷移
 	void ChangeState(STATE state);

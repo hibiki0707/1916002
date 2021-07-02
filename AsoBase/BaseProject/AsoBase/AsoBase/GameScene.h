@@ -1,9 +1,11 @@
 #pragma once
 #include <vector>
 #include<string>
+#include<stack>
 #include "GameCommon.h"
 #include "Vector2.h"
 #include "SceneBase.h"
+
 class SceneManager;
 class Stage;
 class Unit;
@@ -29,6 +31,15 @@ public:
 		GAME,
 		CLEAR,
 		CHANGE_STAGE
+	};
+
+	// 巻き戻し機能用構造体
+	struct History
+	{
+		DIR dir;
+		Vector2 uniPos;
+		Box* box;
+		Vector2 boxPos;
 	};
 
 	GameScene(SceneManager* manager);
@@ -60,6 +71,9 @@ public:
 	// ギミック構成のファイルパスを取得
 	std::string GetCsvPathGimmick(int StageNo);
 
+	// 操作履歴に登録
+	void RegisHistory(DIR dir, Vector2 pos, Box* box);
+
 private:
 	Stage* mStage;
 	Unit* mUnit;
@@ -79,6 +93,10 @@ private:
 	int mStageNo;
 
 	STATE mState;
+
+	// 巻き戻し機能
+	std::stack<History> mHistoryBack;
+	
 
 	// ステージ遷移
 	void ChangeStage(void);

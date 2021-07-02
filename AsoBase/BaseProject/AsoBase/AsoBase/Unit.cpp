@@ -68,6 +68,7 @@ void Unit::Update(void){
 		}
 		break;
 	case Unit::STATE::MOVE:
+	case Unit::STATE::BACK_MOVE:
 	{
 		mStepMove += mSceneManager->GetDeltaTime();
 		float t = mStepMove / TIME_MOVE;
@@ -94,6 +95,7 @@ void Unit::Draw(void){
 		animId = 1;
 		break;
 	case Unit::STATE::MOVE:
+	case Unit::STATE::BACK_MOVE:
 		animCnt += 1;
 		animId = (animCnt / SPEED_SLOW_ANNIM) % CNT_ANIM;
 		if (animId == 3) {
@@ -125,6 +127,11 @@ void Unit::Release(void){
 			DeleteGraph(mImages[y][x]);
 		}
 	}
+}
+
+void Unit::BackMove(GameScene::History his){
+	mHistry = his;
+	ChangeState(STATE::BACK_MOVE);
 }
 
 // 状態遷移
@@ -189,6 +196,30 @@ void Unit::ChangeState(STATE state) {
 		else {
 			mIsPushing = false;
 		}
+
+		// 移動情報が確定
+		if (mIsPushing == true) {
+			// 荷物を押し出していない場合
+			mGameScene->RegisHistory(mDir, mMvSPos, box);
+
+		}
+		else {
+			// 荷物を押し出している場合
+			mGameScene->RegisHistory(mDir, mMvSPos, nullptr);
+		}
+		
+
+		break;
+	case Unit::STATE::BACK_MOVE:
+		// 経過時間を初期化
+		mStepMove = 0.0f;
+		// 
+		mHistry;
+		// 移動元座標
+		mMvSPos;
+		// 移動先座標
+		mMvEPos;
+
 		break;
 	}
 	default:

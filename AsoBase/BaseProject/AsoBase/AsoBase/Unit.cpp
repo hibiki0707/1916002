@@ -134,6 +134,10 @@ void Unit::BackMove(GameScene::History his){
 	ChangeState(STATE::BACK_MOVE);
 }
 
+bool Unit::IsEnableBack(void){
+	return mState == STATE::IDLE;
+}
+
 // 状態遷移
 void Unit::ChangeState(STATE state) {
 	// 状態を変更
@@ -207,18 +211,20 @@ void Unit::ChangeState(STATE state) {
 			// 荷物を押し出している場合
 			mGameScene->RegisHistory(mDir, mMvSPos, nullptr);
 		}
-		
-
 		break;
-	case Unit::STATE::BACK_MOVE:
+	}
+		
+	case Unit::STATE::BACK_MOVE:{
 		// 経過時間を初期化
 		mStepMove = 0.0f;
 		// 
-		mHistry;
+		//mHistry;
 		// 移動元座標
-		mMvSPos;
+		mMvSPos = mPos;
 		// 移動先座標
-		mMvEPos;
+		mMvEPos = mHistry.uniPos;
+
+		mDir = mHistry.dir;
 
 		break;
 	}

@@ -15,7 +15,8 @@ public:
 	enum  class STATE {
 		NONE,
 		IDLE,
-		MOVE
+		MOVE,
+		BACK_MOVE
 	};
 
 	Box(GameScene* scene);
@@ -36,6 +37,12 @@ public:
 
 	// 判定
 	bool IsStayStorage(void);
+
+	// 巻き戻し機能
+	void BackMove(GameScene::History his);
+
+	// 巻き戻し操作が可能か判断
+	bool IsEnableBack(void);
 
 private:
 
@@ -64,6 +71,9 @@ private:
 
 	// 荷物置き場の上に設置されているか判定
 	bool mIsStayStorage;
+
+	// 操作を戻すための情報
+	GameScene::History mHistry;
 
 	// 状態遷移
 	void ChangeState(STATE state);

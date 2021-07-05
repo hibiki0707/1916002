@@ -94,6 +94,21 @@ void GameScene::UpdateGame(void){
 		mStorages[i]->Update();
 	}
 
+	// 操作を戻すNキー
+	if (keyTrgDown[ KEY_P1_A ] && mHistoryBack.size() > 0
+		&& mUnit->IsEnableBack() && mBox->IsEnableBack()) {
+
+		// 最後の操作情報を取得
+		History his = mHistoryBack.top();
+
+		// 最後の操作情報をユニットに渡して巻き戻し処理をさせる
+		mUnit->BackMove(his);
+
+		// 最後の操作情報を削除
+		mHistoryBack.pop();
+	}
+
+
 	// 時間制限
 	mTimeLimit->Update();
 	if (mTimeLimit->IsTimeOver() == true) {

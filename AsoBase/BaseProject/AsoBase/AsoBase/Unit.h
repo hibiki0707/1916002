@@ -1,5 +1,6 @@
 #pragma once
 #include "Vector2.h"
+#include"GameScene.h"
 
 #define NUM_ANIM_X 3
 #define NUM_ANIM_Y 4
@@ -39,6 +40,9 @@ public:
 
 	// Šª‚«–ß‚µ‹@”\
 	void BackMove(GameScene::History his);
+
+	// Šª‚«–ß‚µ‘€ì‚ª‰Â”\‚©”»’f
+	bool IsEnableBack(void);
 
 private:
 

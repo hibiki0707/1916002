@@ -39,6 +39,7 @@ void Box::Update(void){
 
 		break;
 	case Box::STATE::MOVE:
+	case Box::STATE::BACK_MOVE:
 	{
 		mStepMove += mManager->GetDeltaTime();
 		float t = mStepMove / TIME_MOVE;
@@ -265,6 +266,15 @@ bool Box::IsStayStorage(void){
 	return mIsStayStorage;
 }
 
+void Box::BackMove(GameScene::History his){
+	mHistry = his;
+	ChangeState(STATE::BACK_MOVE);
+}
+
+bool Box::IsEnableBack(void){
+	return mState == STATE::IDLE;
+}
+
 void Box::ChangeState(STATE state){
 	// 状態を変更
 	mState = state;
@@ -321,6 +331,21 @@ void Box::ChangeState(STATE state){
 
 		break;
 	}
+	case Box::STATE::BACK_MOVE: {
+		// 経過時間を初期化
+		mStepMove = 0.0f;
+		// 
+		//mHistry;
+		// 移動元座標
+		mMvSPos = mPos;
+		// 移動先座標
+		mMvEPos = mHistry.uniPos;
+
+		mDir = mHistry.dir;
+
+		break;
+	}
+	
 	default:
 		break;
 	}

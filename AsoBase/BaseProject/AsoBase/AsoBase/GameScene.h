@@ -79,6 +79,7 @@ private:
 	Unit* mUnit;
 	Storage* mStorage;
 	TimeLimit* mTimeLimit;
+	Box* mBox;
 	
 	int mImageClear;
 

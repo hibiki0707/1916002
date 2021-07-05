@@ -11,6 +11,8 @@ void TitleScene::Init(void)
 {
 	//タイトル画像の読み込み
 	mImage = LoadGraph("Image/Scene/Title.png");
+
+	count = 0;
 }
 
 void TitleScene::Update(void)
@@ -30,6 +32,14 @@ void TitleScene::Draw(void)
 
 	// タイトル画像の描画
 	DrawGraph(0, 0, mImage, true);
+
+	SetFontSize(50);
+	ChangeFont("Stencil Std");
+	//Bodoni MT//Comic Sans MS//Forte
+	
+	if (count > 30) {
+		DrawString(DEFAULT_SCREEN_SIZE_X / 2 + 40, DEFAULT_SCREEN_SIZE_Y, "SPEACE KEY", 0x999999);
+	}
 }
 
 void TitleScene::Release(void)

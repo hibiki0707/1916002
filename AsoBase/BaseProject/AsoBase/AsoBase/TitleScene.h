@@ -12,4 +12,6 @@ public:
 	void Release(void) override;
 private:
 	int mImage;
+
+	int count;
 };

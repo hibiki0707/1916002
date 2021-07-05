@@ -20,7 +20,7 @@ class GameScene : public SceneBase
 public:
 
 	// 最大ステージ数
-	static constexpr int MAX_STAGE_NO = 5;
+	static constexpr int MAX_STAGE_NO = 6;
 
 	// ステージクリアの表示時間
 	static constexpr float TIME_CLEAR_ = 3.0f;
